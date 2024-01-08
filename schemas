@@ -1,0 +1,85 @@
+create database AgriVimaan;
+use agrivimaan;
+create table Users (
+UserID int auto_increment primary key,
+Name VARCHAR(255),
+phone_number int(15),
+address VARCHAR(255)
+);
+drop table Users;
+select * from users;
+
+create table ServiceRequests(
+RequestID INT auto_increment primary key,
+UserID int,
+ServiceType varchar(255),
+ServiceImg blob,
+IssueDetails TEXT,
+Acres int,
+TypeOfCrop varchar(255),
+OrderStatus ENUM('Pending','Accepted','Depatched','Declined','Delivered'),
+foreign key(UserID) REFERENCES Users(UserID) 
+);
+
+create table DrodeProducts(
+ProductID int auto_increment primary key,
+ProductName varchar(255),
+ProductImg blob,
+Price decimal(10, 2),
+QuantityInStock int
+);
+rename table DrodeProducts to DroneProducts;
+
+create table Orders(
+OrderID int auto_increment primary key,
+UserID int,
+ProductID int,
+OrderQuantity int,
+TotalAmount decimal(10, 2),
+OrderDate timestamp default current_timestamp,
+foreign key(ProductID) references DroneProducts(ProductID),
+foreign key(UserID) references Users(UserID)
+);
+
+create table Feedback(
+FeedbackID int auto_increment primary key,
+UserID int,
+FeedbackText TEXT,
+Rating INT,
+FeedbackDate timestamp default current_timestamp,
+foreign key(UserID) references Users(UserID)
+);
+
+create table Admins(
+AdminID int auto_increment primary key,
+UserName varchar(255),
+Password varchar(255),
+Email varchar(255),
+PhoneNumber int(15)
+);
+
+create table DorneInventory(
+DroneID int auto_increment primary key,
+DroneName varchar(255),
+DroneImg blob,
+Price decimal(10, 2),
+QuantityInStock int
+Status ENUM('Available', 'In Service', 'Maintence'),
+LastServiceDate DATE
+);
+rename table DorneInventory to DronInventory;
+rename table DronInventory to DroneInventory;
+create table Pilots(
+PilotID int auto_increment primary key,
+Name varchar(255),
+DroneID int,
+foreign key(DroneID) references DroneInventory(DroneID)
+);
+
+create table PilotServices(
+PilotID int,
+ServiceRequestID int,
+primary key (PilotID, ServiceRequestID),
+foreign key (PilotID) references Pilots(PilotID),
+foreign key(ServiceRequestID) references ServiceRequests(RequestID)
+);
